@@ -15,3 +15,6 @@ Enlace directo a una búsqueda: `?q=freidora+de+aire`.
 - `estilo_pills.py` y `.streamlit/config.toml`: estilo Píldora Studio, copiados desde `Pocs/_tema` con `sincronizar.py`.
 
 Solo se consultan tiendas cuyo `robots.txt` no prohíbe `/api/` (revisado el 7 de noviembre de 2026). Antes de monetizar, pedir permiso a las tiendas o usar sus programas de afiliados.
+
+## Video de YouTube
+`youtube.py` busca, con la API oficial (YouTube Data API v3), los videos de reseña o unboxing de los últimos 2 años y muestra el de más vistas, con vista previa y botón. Necesita la clave en **Settings → Secrets** de Streamlit Cloud (`YOUTUBE_API_KEY = "..."`) o en `.streamlit/secrets.toml` en local (no se sube a git). Sin clave se muestra solo el botón que abre la búsqueda en YouTube. Cuota gratis: ~99 búsquedas al día; cada resultado se guarda 24 h.
