@@ -1,0 +1,36 @@
+# Tema Power Platform Pills (Píldora Studio). Fuente única: Pocs/_tema/config.toml -> python _tema/sincronizar.py
+[theme]
+base = "dark"
+primaryColor = "#22d3ee"
+backgroundColor = "#0b0f2a"
+secondaryBackgroundColor = "#181e47"
+textColor = "#ffffff"
+linkColor = "#22d3ee"
+linkUnderline = false
+borderColor = "#2a3170"
+dataframeBorderColor = "#2a3170"
+dataframeHeaderBackgroundColor = "#121738"
+showWidgetBorder = true
+baseRadius = "10px"
+buttonRadius = "10px"
+font = "Outfit:https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap"
+headingFont = "Saira Condensed:https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700;800&display=swap"
+codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap"
+headingFontWeights = [800, 700, 700, 600, 600, 600]
+metricValueFontWeight = 700
+greenColor = "#34d399"
+redColor = "#f87171"
+yellowColor = "#ffb900"
+blueColor = "#22d3ee"
+violetColor = "#8b5cf6"
+chartCategoricalColors = ["#22d3ee", "#e040fb", "#8b5cf6", "#ffb900", "#34d399", "#f87171", "#a9b0da"]
+
+[theme.sidebar]
+backgroundColor = "#060c2f"
+secondaryBackgroundColor = "#121738"
+
+[client]
+toolbarMode = "minimal"
+
+[browser]
+gatherUsageStats = false
