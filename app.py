@@ -1,8 +1,11 @@
 """PrecioRadar (versión web): busca un producto en 10 tiendas del Perú y compara el precio del mismo producto."""
 from __future__ import annotations
 
+import os
+
 import streamlit as st
 
+import youtube
 from comparador import NOMBRE, TIENDAS, buscar, relevantes
 
 st.set_page_config(page_title="PrecioRadar", page_icon="📡", layout="centered")
@@ -16,6 +19,22 @@ SUGERENCIAS = ["Televisor 55", "Freidora de aire", "Refrigeradora", "Laptop", "A
 @st.cache_data(ttl=3 * 3600, show_spinner=False, max_entries=300)
 def buscar_cache(termino: str):
     return buscar(termino)
+
+
+def clave_youtube() -> str:
+    """Clave de la YouTube Data API: en Streamlit Cloud va en Settings → Secrets (YOUTUBE_API_KEY = "...")."""
+    try:
+        return st.secrets.get("YOUTUBE_API_KEY", "") or os.environ.get("YOUTUBE_API_KEY", "")
+    except Exception:  # noqa: BLE001 - sin archivo de secretos
+        return os.environ.get("YOUTUBE_API_KEY", "")
+
+
+@st.cache_data(ttl=24 * 3600, show_spinner=False, max_entries=500)
+def video_cache(q: str) -> dict | None:
+    try:
+        return youtube.buscar_video(q, clave_youtube())
+    except Exception:  # noqa: BLE001 - sin cuota o sin red: se muestra solo el enlace de búsqueda
+        return None
 
 
 def soles(x: float) -> str:
@@ -90,8 +109,21 @@ estilo_pills.tarjeta(
     enlaces(mejor),
     nota=(f"Comparado con la tienda más cara (<b>{soles(mejor['precioMax'])}</b>)." if n > 1 else ""),
 )
-if mejor.get("imagen"):
-    st.image(mejor["imagen"], width=160)
+q_video = youtube.consulta(mejor["nombre"], mejor["marca"])
+video = video_cache(q_video) if clave_youtube() else None
+st.html('<div class="pp-lista-cab"><span class="pp-label">Video del producto</span>'
+        '<span class="pp-label" style="color:var(--pp-muted)">YouTube</span></div>')
+if video:
+    st.video(video["url"])
+    st.caption(f"**{video['titulo']}** · {video['canal']} · {youtube.vistas_legibles(video['vistas'])} vistas · {video['fecha']}")
+    c1, c2 = st.columns(2)
+    c1.link_button("▶ Abrir en YouTube", video["url"], type="primary", use_container_width=True)
+    c2.link_button("Más reseñas", youtube.enlace_busqueda(q_video), use_container_width=True)
+else:
+    if mejor.get("imagen"):
+        st.image(mejor["imagen"], width=160)
+    st.link_button("▶ Ver reseñas y unboxing en YouTube", youtube.enlace_busqueda(q_video),
+                   type="primary", use_container_width=True)
 
 filas = [{
     "nombre": p["nombre"],
@@ -100,7 +132,7 @@ filas = [{
     "precio_sub": f" hasta {soles(p['precioMax'])}" if len(p["ofertas"]) > 1 else f" en {NOMBRE[p['ofertas'][0]['tienda']]}",
     "detalle": (f"Ahorras {soles(p['precioMax'] - p['precioMin'])} comprando en {NOMBRE[p['ofertas'][0]['tienda']]}."
                 if len(p["ofertas"]) > 1 else ""),
-    "enlaces": enlaces(p),
+    "enlaces": enlaces(p) + [("▶ Video en YouTube", youtube.enlace_busqueda(youtube.consulta(p["nombre"], p["marca"])))],
 } for p in lista[1:40]]
 if filas:
     estilo_pills.lista(f"Otros {len(filas)} resultados", "Desde", filas, visibles=8)

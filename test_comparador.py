@@ -51,3 +51,11 @@ def test_relevantes():
           {"marca": "Oster", "nombre": "Licuadora", "ofertas": []}]
     assert len(relevantes(ps, "freidora aire")) == 1
     assert len(relevantes(ps, "zzz")) == 2  # sin coincidencias se devuelve todo
+
+
+def test_consulta_youtube():
+    from youtube import consulta, enlace_busqueda, vistas_legibles
+    assert consulta("Freidora de Aire THOMAS 6L TH-AF60DNV Negro", "THOMAS") == "Freidora Aire THOMAS 6L TH-AF60DNV"
+    assert consulta("Smart TV 55 UN55M70HA", "Samsung").startswith("Samsung Smart TV")
+    assert "search_query=" in enlace_busqueda("Freidora Aire")
+    assert vistas_legibles(1_500_000) == "1.5 M" and vistas_legibles(12_300) == "12 mil"
